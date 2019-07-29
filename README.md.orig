@@ -1,21 +1,3 @@
-# How to use docker-compose
-
-To build a net:
-```
-    docker network create hadoop
-```
-
-To start a cluster:
-```
-    ./buildall.sh
-    docker-compose up -d
-```
-
-To scale up spark-workers:
-```
-    docker-compose scale spark-worker=3
-```
-
 # Hadoop Docker
 
 This repository contains *Dockerfile*s for setting up a basic Hadoop cluster.
@@ -260,11 +242,3 @@ Mandatory configuration:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
         - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
       command: tail -f /var/log/dmesg
-
-## Docs
-* [Motivation behind the repo and an example usage @BDE2020 Blog](http://www.big-data-europe.eu/scalable-sparkhdfs-workbench-using-docker/)
-
-## Notes
-Hadoop/Spark dockerfiles were forked from https://bitbucket.org/uhopper/hadoop-docker
-
-
