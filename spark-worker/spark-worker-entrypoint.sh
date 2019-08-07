@@ -16,6 +16,6 @@ if [ -z "$SPARK_MASTER_URL" ]; then
   echo "Spark master URL not specified"
   exit 2
 fi
-
+/entrypoint.sh
 $SPARK_HOME/sbin/start-slave.sh "$SPARK_MASTER_URL"
 exec tail -f $SPARK_HOME/logs/*

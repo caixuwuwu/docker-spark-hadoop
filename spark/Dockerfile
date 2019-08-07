@@ -8,6 +8,11 @@ RUN set -x \
     && tar -xvf /tmp/spark.tar.gz -C /opt/ \
     && rm /tmp/spark.tar.gz*
 
+RUN apt-get install -y --no-install-recommends python3 python-pip \
+    && pip install pyspark \
+    && pip install numpy \
+    && pip install pandas
+
 ENV SPARK_HOME=/opt/spark-$SPARK_VERSION
 RUN mv /opt/spark-$SPARK_VERSION-* $SPARK_HOME
 
