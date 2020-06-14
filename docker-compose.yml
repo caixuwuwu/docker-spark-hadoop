@@ -1,179 +1,187 @@
-# HDFS :
-namenode:
-  image: bde2020/hadoop-namenode
-  hostname: namenode
-  container_name: namenode
-  domainname: hadoop
-  net: hadoop
-  ports:
-  - "50070:50070"
-  - "9000:9000"
-#  - "8020:8020"
-  volumes:
-    - namenode:/hadoop/dfs/name
-  environment:
-    - CLUSTER_NAME=test
-  env_file:
+version: "2"
+
+services:
+  # HDFS :
+  namenode:
+    image: bde2020/hadoop-namenode
+    hostname: namenode
+    container_name: namenode
+#    domainname: hadoop
+    ports:
+    - "50070:50070"
+    - "9000:9000"
+    - "8020:8020"
+    - "50090:50090"
+    volumes:
+      - ./data/namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+
+  datanode-1:
+    image: bde2020/hadoop-datanode
+    hostname: datanode1
+    container_name: datanode1
+#    domainname: hadoop
+    extra_hosts:
+      - namenode:172.21.0.2
+    links:
+      - namenode
+    ports:
+        - "50075:50075"
+    volumes:
+    - ./data/datanode1:/hadoop/dfs/data
+    env_file:
     - ./hadoop.env
 
-#SecondaryNameNode:
-#  image: bde2020/hadoop-secondmanager
-#  hostname: secondmanager
-#  container_name: secondmanager
-#  domainname: hadoop
-#  net: hadoop
-#  ports:
-#  - "50070:50070"
-#  - "9000:9000"
-#  volumes:
-#  - namenode:/hadoop/dfs/name
-#  environment:
-#  - CLUSTER_NAME=test
-#  env_file:
-#  - ./hadoop.env
-
-datanode-1:
-  image: bde2020/hadoop-datanode
-  hostname: datanode1
-  container_name: datanode1
-  domainname: hadoop
-  net: hadoop
-  ports:
-      - "50075:50075"
-  volumes:
-  - datanode1:/hadoop/dfs/data
-  env_file:
-  - ./hadoop.env
-
-datanode-2:
-  image: bde2020/hadoop-datanode
-  hostname: datanode2
-  container_name: datanode2
-  domainname: hadoop
-  net: hadoop
-  ports:
-    - "50010:50010"
-  volumes:
-  - datanode2:/hadoop/dfs/data
-  env_file:
-  - ./hadoop.env
-
-
-# YARN :
-resourcemanager:
-  image: bde2020/hadoop-resourcemanager
-  hostname: resourcemanager
-  container_name: resourcemanager
-  domainname: hadoop
-  net: hadoop
-  ports:
-  - "8088:8088"
-  - "8032:8032"
-  env_file:
+  datanode-2:
+    image: bde2020/hadoop-datanode
+    hostname: datanode2
+    container_name: datanode2
+#    domainname: hadoop
+    links:
+      - namenode
+    extra_hosts:
+      - namenode:172.21.0.2
+    ports:
+      - "50010:50010"
+    volumes:
+    - ./data/datanode2:/hadoop/dfs/data
+    env_file:
     - ./hadoop.env
 
+  #SecondaryNameNode:
+  #  image: bde2020/hadoop-secondmanager
+  #  hostname: secondmanager
+  #  container_name: secondmanager
+  #  domainname: hadoop
+  #  net: hadoop
+  #  ports:
+  #  - "50070:50070"
+  #  - "9000:9000"
+  #  volumes:
+  #  - namenode:/hadoop/dfs/name
+  #  environment:
+  #  - CLUSTER_NAME=test
+  #  env_file:
+  #  - ./hadoop.env
 
-nodemanager-1:
-  image: bde2020/hadoop-nodemanager
-  hostname: nodemanager1
-  container_name: nodemanager1
-  domainname: hadoop
-  net: hadoop
-  ports:
-    - "8042:8042"
-  env_file:
-  - ./hadoop.env
-
-historyserver:
-  image: bde2020/hadoop-historyserver
-  hostname: historyserver
-  container_name: historyserver
-  domainname: hadoop
-  net: hadoop
-  volumes:
-    - historyserver:/hadoop/yarn/timeline
-  env_file:
-    - ./hadoop.env
-  ports:
-    - "8188:8188"
-
-# spark (支持yarn-cluster/yarn-client/standalone):
-spark:
-  image: bde2020/hadoop-spark
-  hostname: spark
-  container_name: spark
-  domainname: hadoop
-  net: hadoop
-  environment:
-    - SPARK_CONF_spark_eventLog_enabled=true
-    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
-    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
-  env_file:
-    - ./hadoop.env
-  ports:
-    - "4040:4040"
-
-spark-master:
-  image: bde2020/hadoop-spark-master
-  hostname: spark-master
-  container_name: spark-master
-  domainname: hadoop
-  net: hadoop
-  environment:
-  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-  - SPARK_CONF_spark_eventLog_enabled=true
-  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
-  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
-  env_file:
-  - ./hadoop.env
-  ports:
-    - "8080:8080"
-    - "7077:7077"
-
-spark-worker-1:
-  image: bde2020/hadoop-spark-worker
-  hostname: spark-worker-1
-  domainname: hadoop
-  net: hadoop
-  environment:
-  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-  - SPARK_CONF_spark_eventLog_enabled=true
-  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
-  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
-  - SPARK_MASTER_URL=spark://spark-master:7077
-  - SPARK_WORKER_PORT=8081
-  ports:
-    - "8082:8082"
-  env_file:
-  - ./hadoop.env
-
-spark-worker-2:
-  image: bde2020/hadoop-spark-worker
-  hostname: spark-worker-2
-  domainname: hadoop
-  net: hadoop
-  environment:
-  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-  - SPARK_CONF_spark_eventLog_enabled=true
-  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
-  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
-  - SPARK_MASTER_URL=spark://spark-master:7077
-  - SPARK_WORKER_PORT=8082
-  ports:
-    - "8081:8081"
-  env_file:
-  - ./hadoop.env
-
-#spark-notebook:
-#  image: bde2020/hadoop-spark-notebook
-#  hostname: sparknotebook
-#  container_name: sparknotebook
-#  domainname: hadoop
-#  net: hadoop
-#  environment:
-#    - SPARK_NOTEBOOK_MASTER=yarn-client
-#  env_file:
+  # YARN :
+#  resourcemanager:
+#    image: bde2020/hadoop-resourcemanager
+#    hostname: resourcemanager
+#    container_name: resourcemanager
+#    domainname: hadoop
+##    net: hadoop
+#    ports:
+#    - "8088:8088"
+#    - "8032:8032"
+#    env_file:
+#      - ./hadoop.env
+#
+#
+#  nodemanager-1:
+#    image: bde2020/hadoop-nodemanager
+#    hostname: nodemanager1
+#    container_name: nodemanager1
+#    domainname: hadoop
+##    net: hadoop
+#    ports:
+#      - "8042:8042"
+#    env_file:
 #    - ./hadoop.env
+#
+#  historyserver:
+#    image: bde2020/hadoop-historyserver
+#    hostname: historyserver
+#    container_name: historyserver
+#    domainname: hadoop
+##    net: hadoop
+#    volumes:
+#      - ./data/historyserver:/hadoop/yarn/timeline
+#    env_file:
+#      - ./hadoop.env
+#    ports:
+#      - "8188:8188"
+
+  # spark (支持yarn-cluster/yarn-client/standalone):
+  #spark:
+  #  image: bde2020/hadoop-spark
+  #  hostname: spark
+  #  container_name: spark
+  #  domainname: hadoop
+  #  net: hadoop
+  #  environment:
+  #    - SPARK_CONF_spark_eventLog_enabled=true
+  #    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
+  #    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
+  #  env_file:
+  #    - ./hadoop.env
+  #  ports:
+  #    - "4040:4040"
+
+  #spark-master:
+  #  image: bde2020/hadoop-spark-master
+  #  hostname: spark-master
+  #  container_name: spark-master
+  #  domainname: hadoop
+  #  net: hadoop
+  #  environment:
+  #  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+  #  - SPARK_CONF_spark_eventLog_enabled=true
+  #  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
+  #  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
+  #  env_file:
+  #  - ./hadoop.env
+  #  ports:
+  #    - "8080:8080"
+  #    - "7077:7077"
+  #
+  #spark-worker-1:
+  #  image: bde2020/hadoop-spark-worker
+  #  hostname: spark-worker-1
+  #  domainname: hadoop
+  #  net: hadoop
+  #  environment:
+  #  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+  #  - SPARK_CONF_spark_eventLog_enabled=true
+  #  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
+  #  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
+  #  - SPARK_MASTER_URL=spark://spark-master:7077
+  #  - SPARK_WORKER_PORT=8081
+  #  ports:
+  #    - "8082:8082"
+  #  env_file:
+  #  - ./hadoop.env
+
+  #spark-worker-2:
+  #  image: bde2020/hadoop-spark-worker
+  #  hostname: spark-worker-2
+  #  domainname: hadoop
+  #  net: hadoop
+  #  environment:
+  #  - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+  #  - SPARK_CONF_spark_eventLog_enabled=true
+  #  - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
+  #  - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:9000/spark-logs
+  #  - SPARK_MASTER_URL=spark://spark-master:7077
+  #  - SPARK_WORKER_PORT=8082
+  #  ports:
+  #    - "8081:8081"
+  #  env_file:
+  #  - ./hadoop.env
+
+  #spark-notebook:
+  #  image: bde2020/hadoop-spark-notebook
+  #  hostname: sparknotebook
+  #  container_name: sparknotebook
+  #  domainname: hadoop
+  #  net: hadoop
+  #  environment:
+  #    - SPARK_NOTEBOOK_MASTER=yarn-client
+  #  env_file:
+  #    - ./hadoop.env
 
 
 

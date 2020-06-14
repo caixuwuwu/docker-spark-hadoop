@@ -16,4 +16,6 @@ if [ "`ls -A $namedir`" == "" ]; then
   $HADOOP_PREFIX/bin/hdfs --config $HADOOP_CONF_DIR secondarynamenode -format $CLUSTER_NAME
 fi
 
+#$HADOOP_PREFIX/bin/hadoop namenode -format
+$HADOOP_PREFIX/bin/hdfs --config $HADOOP_CONF_DIR namenode
 $HADOOP_PREFIX/bin/hdfs --config $HADOOP_CONF_DIR secondarynamenode

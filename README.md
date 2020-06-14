@@ -24,7 +24,7 @@ The available components are:
 1. *HDFS*:
 
    * *namenode*
-   * *dtanode*
+   * *datanode*
    
 1. *YARN*:
    

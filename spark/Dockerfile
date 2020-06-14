@@ -1,17 +1,18 @@
 FROM bde2020/hadoop
 MAINTAINER Xuwu Cai <caixuwu@gmail.com>
 
-ENV SPARK_VERSION 2.4.3
+ENV SPARK_VERSION 2.4.5
 ENV SPARK_URL https://www.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
 RUN set -x \
-    && curl -fSL "$SPARK_URL" -o /tmp/spark.tar.gz \
+    && wget "$SPARK_URL" -O /tmp/spark.tar.gz \
     && tar -xvf /tmp/spark.tar.gz -C /opt/ \
     && rm /tmp/spark.tar.gz*
 
-RUN apt-get install -y --no-install-recommends python3 python-pip \
-    && pip install pyspark \
-    && pip install numpy \
-    && pip install pandas
+#RUN apt-get install -y --no-install-recommends python3 python-pip \
+#    && pip install --upgrade pip \
+#    && pip3 install numpy===1.15.1 \
+#    && pip3 install pandas==0.24.1 \
+#    && pip3 install pyspark==2.4.5
 
 ENV SPARK_HOME=/opt/spark-$SPARK_VERSION
 RUN mv /opt/spark-$SPARK_VERSION-* $SPARK_HOME

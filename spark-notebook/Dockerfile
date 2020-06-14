@@ -5,7 +5,7 @@ ENV APACHE_SPARK_VERSION 2.4.3
 ENV APACHE_HADOOP_VERSION 2.7.1
 
 RUN set -x \
-    && curl -fSL "https://dl.dropboxusercontent.com/u/4882345/spark-notebook/spark-notebook-0.6.3-scala-2.11.7-spark-1.6.1-hadoop-2.7.1-with-hive-with-parquet.tgz" -o /tmp/spark-notebook.tgz \
+    && wget "https://dl.dropboxusercontent.com/u/4882345/spark-notebook/spark-notebook-0.6.3-scala-2.11.7-spark-1.6.1-hadoop-2.7.1-with-hive-with-parquet.tgz" -O /tmp/spark-notebook.tgz \
     && tar -xzvf /tmp/spark-notebook.tgz -C /opt/ \
     && mv /opt/spark-notebook-* /opt/spark-notebook \
     && rm /tmp/spark-notebook.tgz
