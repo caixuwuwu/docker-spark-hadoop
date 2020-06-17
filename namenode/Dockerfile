@@ -1,5 +1,5 @@
-FROM bde2020/hadoop
-MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
+FROM hadoop-base
+MAINTAINER caixuwu@outlook.com
 
 ENV HDFS_CONF_dfs_namenode_name_dir=file:///hadoop/dfs/name
 RUN mkdir -p /hadoop/dfs/name

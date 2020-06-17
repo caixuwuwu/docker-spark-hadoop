@@ -1,4 +1,4 @@
-FROM bde2020/hadoop-spark
+FROM hadoop-spark
 MAINTAINER Xuwu Cai <caixuwu@gmail.com>
 
 ADD spark-master-entrypoint.sh /spark-master-entrypoint.sh

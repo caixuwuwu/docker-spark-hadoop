@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t bde2020/hadoop-nodemanager .
+docker build -t hadoop-nodemanager .

@@ -1,4 +1,4 @@
-FROM bde2020/huebuildenv
+FROM huebuildenv
 MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
 
 RUN mkdir -p /opt/hue

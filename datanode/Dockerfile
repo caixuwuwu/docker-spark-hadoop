@@ -1,4 +1,4 @@
-FROM bde2020/hadoop
+FROM hadoop-base
 MAINTAINER Xuwu <caixuwu@gmail.com>
 
 ENV HDFS_CONF_dfs_datanode_data_dir=file:///hadoop/dfs/data

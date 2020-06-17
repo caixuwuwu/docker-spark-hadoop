@@ -1,4 +1,4 @@
-FROM bde2020/hadoop
+FROM hadoop-base
 MAINTAINER Xuwu <caixuwu@gmail.com>
 
 ENV YARN_CONF_yarn_timeline___service_leveldb___timeline___store_path=/hadoop/yarn/timeline

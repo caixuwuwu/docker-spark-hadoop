@@ -1,4 +1,4 @@
-FROM bde2020/hadoop-spark
+FROM hadoop-spark
 MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
 
 ADD spark-worker-entrypoint.sh /spark-worker-entrypoint.sh

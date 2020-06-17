@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t bde2020/hadoop-secondaryNamenode .
+docker build -t hadoop-secondaryNamenode .

@@ -1,5 +1,5 @@
-FROM bde2020/hadoop
-MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
+FROM hadoop-base
+MAINTAINER caixuwu@outlook.com
 
 ADD run.sh /run.sh
 RUN chmod a+x /run.sh

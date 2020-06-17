@@ -1,4 +1,4 @@
-FROM bde2020/hadoop
+FROM hadoop-base
 MAINTAINER Xuwu Cai <caixuwu@gmail.com>
 
 ENV SPARK_VERSION 2.4.5

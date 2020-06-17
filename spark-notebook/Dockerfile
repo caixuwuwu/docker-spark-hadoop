@@ -1,4 +1,4 @@
-FROM bde2020/hadoop
+FROM hadoop-base
 MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
 
 ENV APACHE_SPARK_VERSION 2.4.3
