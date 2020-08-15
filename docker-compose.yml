@@ -4,16 +4,16 @@ services:
   # HDFS :
   namenode:
     image: hadoop-namenode
-    hostname: namenode
+#    hostname: namenode
     container_name: namenode
 #    domainname: hadoop
     ports:
-    - "50070:50070"
-    - "9000:9000"
-    - "8020:8020"
-    - "50090:50090"
+      - "50070:50070"
+      - "9000:9000"
+      - "8020:8020"
+      - "50090:50090"
     volumes:
-      - ./data/namenode:/hadoop/dfs/name
+      - ~/hdata/namenode:/hadoop/dfs/name
     environment:
       - CLUSTER_NAME=test
     env_file:
@@ -21,35 +21,37 @@ services:
 
   datanode-1:
     image: hadoop-datanode
-    hostname: datanode1
+#    hostname: datanode1
     container_name: datanode1
 #    domainname: hadoop
-    extra_hosts:
-      - namenode:172.21.0.2
-    links:
+#    extra_hosts:  # 生产环境 云端配置
+#      - namenode:0.0.0.0
+    depends_on:
       - namenode
+    links:
+      - "namenode:namenode"
     ports:
         - "50075:50075"
     volumes:
-    - ./data/datanode1:/hadoop/dfs/data
+      - ~/hdata/datanode1:/hadoop/dfs/data
     env_file:
-    - ./hadoop.env
+      - ./hadoop.env
 
   datanode-2:
     image: hadoop-datanode
-    hostname: datanode2
+#    hostname: datanode2
     container_name: datanode2
 #    domainname: hadoop
-    links:
+    depends_on:
       - namenode
-    extra_hosts:
-      - namenode:172.21.0.2
+    links:
+      - "namenode:namenode"
     ports:
       - "50010:50010"
     volumes:
-    - ./data/datanode2:/hadoop/dfs/data
+      - ~/hdata/datanode2:/hadoop/dfs/data
     env_file:
-    - ./hadoop.env
+      - ./hadoop.env
 
   #SecondaryNameNode:
   #  image: hadoop-secondmanager
