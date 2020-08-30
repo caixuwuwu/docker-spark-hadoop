@@ -1,17 +1,23 @@
 FROM hadoop-base
 MAINTAINER Xuwu Cai <caixuwu@gmail.com>
 
-ENV SPARK_VERSION 2.4.5
-ENV SPARK_URL https://www.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
+ENV SPARK_VERSION 2.4.6
+ENV SPARK_URL https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
 RUN set -x \
-    && wget "$SPARK_URL" -O /tmp/spark.tar.gz \
+    && wget -c "$SPARK_URL" -O /tmp/spark.tar.gz \
     && tar -xvf /tmp/spark.tar.gz -C /opt/ \
     && rm /tmp/spark.tar.gz*
 
-RUN apt-get install -y --autoremove --no-install-recommends python3.7 python-pip \
-    && apt-get clean
-    && pip3 install --no-cache-dir  --disable-pip-version-check numpy===1.15.1 requests==2.22.0 happybase==1.2.0 \
-    thrift==0.11.0 pandas==0.24.1 pyspark==2.4.5 pymysql==0.8.0 arrow==0.12.1 tensorflow==2.2.0 tensorflowonspark \
+RUN cat /etc/apt/sources.list.bak >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --autoremove --no-install-recommends python3-pip python3-dev \
+        build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev htop \
+    && apt-get clean \
+    && cp /usr/bin/python3 /usr/bin/python \
+    && pip3 install --upgrade pip \
+    && pip3 install --no-cache-dir --disable-pip-version-check setuptools \
+    && pip3 install --no-cache-dir --disable-pip-version-check requests==2.22.0 happybase==1.2.0 pandas==0.24.1 \
+        pymysql==0.8.0 tensorflowonspark tensorflow \
     && rm -rf ~/.cache/pip
 
 ENV SPARK_HOME=/opt/spark-$SPARK_VERSION
