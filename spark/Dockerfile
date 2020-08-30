@@ -1,4 +1,5 @@
-FROM hadoop-base
+FROM gcr.io/graphic-outlook-287512/github.com/caixuwuwu/docker-spark-hadoop:v0.0.1
+#FROM hadoop-base
 MAINTAINER Xuwu Cai <caixuwu@gmail.com>
 
 ENV SPARK_VERSION 2.4.6
