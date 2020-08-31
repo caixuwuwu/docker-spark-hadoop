@@ -1,0 +1,99 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "namenode-config-hxzo"
+  namespace: "default"
+  labels:
+    app: "namenode"
+data:
+  CLUSTER_NAME: "test"
+  NAMENODE_ADDR: "0.0.0.0"
+  CORE_CONF_hadoop_http_staticuser_user: "root"
+  HADOOP_HOME: "/opt/hadoop-2.7.7"
+  HADOOP_COMMON_LIB_NATIVE_DIR: "/opt/hadoop-2.7.7/lib/native"
+  HADOOP_OPTS: "-Djava.library.path=/opt/hadoop-2.7.7/lib:/opt/hadoop-2.7.7/lib/native"
+  HDFS_CONF_dfs_webhdfs_enabled: "true"
+  HDFS_CONF_dfs_permissions_enabled: "false"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "namenode"
+  namespace: "default"
+  labels:
+    app: "namenode"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "namenode"
+  template:
+    metadata:
+      labels:
+        app: "namenode"
+    spec:
+      containers:
+        - name: "docker-spark-hadoop-namenode-sha256-1"
+          image: "gcr.io/graphic-outlook-287512/github.com/caixuwuwu/docker-spark-hadoop-namenode@sha256:db7d7c1ca6163d562782ffb22bc684acb47a77ac4db8fd9958ad0e1596c9faa4"
+          env:
+            - name: "CLUSTER_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  key: "CLUSTER_NAME"
+                  name: "namenode-config-hxzo"
+            - name: "NAMENODE_ADDR"
+              valueFrom:
+                configMapKeyRef:
+                  key: "NAMENODE_ADDR"
+                  name: "namenode-config-hxzo"
+            - name: "CORE_CONF_hadoop_http_staticuser_user"
+              valueFrom:
+                configMapKeyRef:
+                  key: "CORE_CONF_hadoop_http_staticuser_user"
+                  name: "namenode-config-hxzo"
+            - name: "HADOOP_HOME"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_HOME"
+                  name: "namenode-config-hxzo"
+            - name: "HADOOP_COMMON_LIB_NATIVE_DIR"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_COMMON_LIB_NATIVE_DIR"
+                  name: "namenode-config-hxzo"
+            - name: "HADOOP_OPTS"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_OPTS"
+                  name: "namenode-config-hxzo"
+            - name: "HDFS_CONF_dfs_webhdfs_enabled"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_webhdfs_enabled"
+                  name: "namenode-config-hxzo"
+            - name: "HDFS_CONF_dfs_permissions_enabled"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_permissions_enabled"
+                  name: "namenode-config-hxzo"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "namenode-hpa-1fr5"
+  namespace: "default"
+  labels:
+    app: "namenode"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "namenode"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        targetAverageUtilization: 80

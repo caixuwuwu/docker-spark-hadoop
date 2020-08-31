@@ -1,0 +1,105 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "datanode-config-omvv"
+  namespace: "default"
+  labels:
+    app: "datanode"
+data:
+  HDFS_CONF_dfs_datanode_address: "0.0.0.0:50010"
+  HDFS_CONF_dfs_datanode_http_address: "0.0.0.0:50070"
+  HDFS_CONF_dfs_datanode_ipc_address: "0.0.0.0:50020"
+  CORE_CONF_hadoop_http_staticuser_user: "root"
+  HADOOP_HOME: "/opt/hadoop-2.7.7"
+  HADOOP_COMMON_LIB_NATIVE_DIR: "/opt/hadoop-2.7.7/lib/native"
+  HADOOP_OPTS: "-Djava.library.path=/opt/hadoop-2.7.7/lib:/opt/hadoop-2.7.7/lib/native"
+  HDFS_CONF_dfs_webhdfs_enabled: "true"
+  HDFS_CONF_dfs_permissions_enabled: "false"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "datanode"
+  namespace: "default"
+  labels:
+    app: "datanode"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "datanode"
+  template:
+    metadata:
+      labels:
+        app: "datanode"
+    spec:
+      containers:
+        - name: "docker-spark-hadoop-datanode-sha256-1"
+          image: "gcr.io/graphic-outlook-287512/github.com/caixuwuwu/docker-spark-hadoop-datanode@sha256:1d509b580a22bab91b7423177b7c4ae1fce9a232aa92ae0b15638c30d62aa18c"
+          env:
+            - name: "HDFS_CONF_dfs_datanode_address"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_datanode_address"
+                  name: "datanode-config-omvv"
+            - name: "HDFS_CONF_dfs_datanode_http_address"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_datanode_http_address"
+                  name: "datanode-config-omvv"
+            - name: "HDFS_CONF_dfs_datanode_ipc_address"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_datanode_ipc_address"
+                  name: "datanode-config-omvv"
+            - name: "CORE_CONF_hadoop_http_staticuser_user"
+              valueFrom:
+                configMapKeyRef:
+                  key: "CORE_CONF_hadoop_http_staticuser_user"
+                  name: "datanode-config-omvv"
+            - name: "HADOOP_HOME"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_HOME"
+                  name: "datanode-config-omvv"
+            - name: "HADOOP_COMMON_LIB_NATIVE_DIR"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_COMMON_LIB_NATIVE_DIR"
+                  name: "datanode-config-omvv"
+            - name: "HADOOP_OPTS"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HADOOP_OPTS"
+                  name: "datanode-config-omvv"
+            - name: "HDFS_CONF_dfs_webhdfs_enabled"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_webhdfs_enabled"
+                  name: "datanode-config-omvv"
+            - name: "HDFS_CONF_dfs_permissions_enabled"
+              valueFrom:
+                configMapKeyRef:
+                  key: "HDFS_CONF_dfs_permissions_enabled"
+                  name: "datanode-config-omvv"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "datanode-hpa-1jgn"
+  namespace: "default"
+  labels:
+    app: "datanode"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "datanode"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        targetAverageUtilization: 80
