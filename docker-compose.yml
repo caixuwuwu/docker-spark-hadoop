@@ -9,8 +9,7 @@ services:
 #    domainname: hadoop
     ports:
       - "50070:50070"  # 外网ip口
-      - "8020:8020"
-      - "50090:50090"
+      - "8020:8020"    # 节点端口
     volumes:
       - ~/hdata/namenode:/hadoop/dfs/name
     environment:
@@ -31,13 +30,12 @@ services:
     links:
       - "namenode:namenode"
     ports:
-        - "50071:50071"
+        - "50071:50071"  # 外网ip口
         - "50011:50011"
         - "50021:50021"
     volumes:
       - ~/hdata/datanode1:/hadoop/dfs/data
     environment:
-      - NAMENODE_ADDR=namenode
       - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
       - HDFS_CONF_dfs_datanode_address=0.0.0.0:50011
       - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:50071
@@ -57,13 +55,12 @@ services:
     links:
       - "namenode:namenode"
     ports:
-      - "50072:50072"
+      - "50072:50072"   # 外网ip口
       - "50012:50012"
       - "50022:50022"
     volumes:
       - ~/hdata/datanode2:/hadoop/dfs/data
     environment:
-      - NAMENODE_ADDR=namenode
       - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
       - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:50072
       - HDFS_CONF_dfs_datanode_address=0.0.0.0:50012
@@ -71,21 +68,22 @@ services:
     env_file:
       - ./hadoop.env
 
-  #SecondaryNameNode:
-  #  image: hadoop-secondmanager
-  #  hostname: secondmanager
-  #  container_name: secondmanager
-  #  domainname: hadoop
-  #  net: hadoop
-  #  ports:
-  #  - "50070:50070"
-  #  - "9000:9000"
-  #  volumes:
-  #  - namenode:/hadoop/dfs/name
-  #  environment:
-  #  - CLUSTER_NAME=test
-  #  env_file:
-  #  - ./hadoop.env
+#  SecondaryNameNode:
+#    image: hadoop-secondmanager
+##    hostname: secondmanager
+#    container_name: secondmanager
+##    domainname: hadoop
+##    net: hadoop
+#    depends_on:
+#      - namenode
+#    links:
+#      - "namenode:namenode"
+#    ports:
+#      - "50090：50090" # 外网web端口
+#    environment:
+#      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+#    env_file:
+#      - ./hadoop.env
 
   # YARN :
 #  resourcemanager:
