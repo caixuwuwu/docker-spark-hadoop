@@ -1,12 +1,16 @@
 version: "2"
+#networks:
+#  hadoop:
+#    external: true
 
 services:
   # HDFS :
   namenode:
     image: hadoop-namenode
-#    hostname: namenode
+    hostname: namenode
     container_name: namenode
-#    domainname: hadoop
+#    network_mode: "hadoop"
+#    domainname: hadoop #dns
     ports:
       - "50070:50070"  # 外网ip口
       - "8020:8020"    # 节点端口
@@ -20,8 +24,9 @@ services:
 
   datanode-1:
     image: hadoop-datanode
-#    hostname: datanode-1
+    hostname: datanode-1
     container_name: datanode1
+#    network_mode: "hadoop"
 #    domainname: hadoop
 #    extra_hosts:  # 生产环境 云端配置
 #      - namenode:0.0.0.0
@@ -45,8 +50,9 @@ services:
 
   datanode-2:
     image: hadoop-datanode
-#    hostname: datanode-2
+    hostname: datanode-2
     container_name: datanode2
+#    network_mode: "hadoop"
 #    domainname: hadoop
 #    extra_hosts:  # 生产环境 云端配置
 #      - namenode:0.0.0.0
@@ -138,83 +144,77 @@ services:
 #    ports:
 #      - "4040:4040"
 
-#  spark-master:
-#    image: hadoop-spark-master
-##    hostname: spark-master
-#    container_name: spark-master
-#    environment:
-#      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
-#      - SPARK_CONF_spark_eventLog_enabled=true
-#      - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
-#      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
-#    depends_on:
-#      - namenode
-#    links:
-#      - "namenode:namenode"
-#    env_file:
-#    - ./hadoop.env
-#    ports:
-#      - "8080:8080"
-#      - "7077:7077"
-#    volumes:
-#    - ~/PycharmProjects/TensorFlowOnSpark:/opt/TensorFlowOnSpark
-#
-#  spark-worker-1:
-#    image: hadoop-spark-worker
-##    hostname: spark-worker-1
-#    container_name: spark-worker-1
-#    environment:
-#    - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
-#    - SPARK_CONF_spark_eventLog_enabled=true
-#    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
-#    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
-#    - SPARK_MASTER_URL=spark://spark-master:7077
-#    - SPARK_WORKER_PORT=7071
-#    - SPARK_WORKER_WEBUI_PORT=8081
-#    depends_on:
-#      - spark-master
-#    links:
-#      - "spark-master:spark-master"
-#      - "namenode:namenode"
-#    ports:
-#      - "7071:7071"
-#      - "8081:8081"
-#    env_file:
-#    - ./hadoop.env
-#
-#  spark-worker-2:
-#    image: hadoop-spark-worker
-##    hostname: spark-worker-2
-#    container_name: spark-worker-2
-#    environment:
-#    - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
-#    - SPARK_CONF_spark_eventLog_enabled=true
-#    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
-#    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
-#    - SPARK_MASTER_URL=spark://spark-master:7077
-#    - SPARK_WORKER_PORT=7072
-#    - SPARK_WORKER_WEBUI_PORT=8082
-#    depends_on:
-#      - spark-master
-#    links:
-#      - "spark-master:spark-master"
-#      - "namenode:namenode"
-#    ports:
-#      - "7072:7072"
-#      - "8082:8082"
-#    env_file:
-#    - ./hadoop.env
+  spark-master:
+    image: hadoop-spark-master
+    hostname: spark-master
+    container_name: spark-master
+#    domainname: hadoop
+#    network_mode: hadoop
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SPARK_CONF_spark_eventLog_enabled=true
+      - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+    depends_on:
+      - namenode
+    links:
+      - "namenode:namenode"
+    env_file:
+    - ./hadoop.env
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    volumes:
+    - ~/PycharmProjects/TensorFlowOnSpark:/opt/TensorFlowOnSpark
 
-  #spark-notebook:
-  #  image: hadoop-spark-notebook
-  #  hostname: sparknotebook
-  #  container_name: sparknotebook
-  #  domainname: hadoop
-  #  net: hadoop
-  #  environment:
-  #    - SPARK_NOTEBOOK_MASTER=yarn-client
-  #  env_file:
-  #    - ./hadoop.env
+  spark-worker-1:
+    image: hadoop-spark-worker
+    hostname: spark-worker-1
+    container_name: spark-worker-1
+#    domainname: hadoop
+#    network_mode: hadoop
+    environment:
+    - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    - SPARK_CONF_spark_eventLog_enabled=true
+    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+    - SPARK_MASTER_URL=spark://spark-master:7077
+    - SPARK_WORKER_PORT=7071
+    - SPARK_WORKER_WEBUI_PORT=8081
+    depends_on:
+      - spark-master
+    links:
+      - "spark-master:spark-master"
+      - "namenode:namenode"
+    ports:
+      - "7071:7071"
+      - "8081:8081"
+    env_file:
+    - ./hadoop.env
 
+  spark-worker-2:
+    image: hadoop-spark-worker
+    hostname: spark-worker-2
+    container_name: spark-worker-2
+#    domainname: hadoop
+#    network_mode: hadoop
+    environment:
+    - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    - SPARK_CONF_spark_eventLog_enabled=true
+    - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:9000/spark-logs
+    - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+    - SPARK_MASTER_URL=spark://spark-master:7077
+    - SPARK_WORKER_PORT=7072
+    - SPARK_WORKER_WEBUI_PORT=8082
+    depends_on:
+      - spark-master
+    links:
+      - "spark-master:spark-master"
+      - "namenode:namenode"
+    ports:
+      - "7072:7072"
+      - "8082:8082"
+    env_file:
+    - ./hadoop.env
 
 

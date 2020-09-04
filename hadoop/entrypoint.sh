@@ -79,4 +79,7 @@ if [ -n "$GANGLIA_HOST" ]; then
     done > /etc/hadoop/hadoop-metrics2.properties
 fi
 
+echo datanode-1 > /opt/hadoop-2.7.7/etc/hadoop/slaves
+echo datanode-2 >> /opt/hadoop-2.7.7/etc/hadoop/slaves
+
 exec $@
