@@ -1,5 +1,5 @@
-FROM gcr.io/graphic-outlook-287512/github.com/caixuwuwu/docker-spark-hadoop-base:v0.0.1
-#FROM hadoop-base
+#FROM gcr.io/graphic-outlook-287512/github.com/caixuwuwu/docker-spark-hadoop-base:v0.0.1
+FROM hadoop-base
 MAINTAINER Xuwu <caixuwu@gmail.com>
 
 ENV HDFS_CONF_dfs_datanode_data_dir=file:///hadoop/dfs/data

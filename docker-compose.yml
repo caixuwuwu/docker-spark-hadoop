@@ -1,12 +1,13 @@
-version: "2"
+version: "3"
 
 services:
   # HDFS :
   namenode:
     image: hadoop-namenode
-#    hostname: namenode
+    hostname: namenode
     container_name: namenode
-#    domainname: hadoop
+    domainname: hadoop
+    network_mode: "hadoop"
     ports:
       - "50070:50070"  # 外网ip口
       - "8020:8020"    # 节点端口
@@ -20,9 +21,10 @@ services:
 
   datanode-1:
     image: hadoop-datanode
-#    hostname: datanode-1
-    container_name: datanode1
-#    domainname: hadoop
+    hostname: datanode-1
+    container_name: datanode-1
+    domainname: hadoop
+    network_mode: "hadoop"
 #    extra_hosts:  # 生产环境 云端配置
 #      - namenode:0.0.0.0
     depends_on:
@@ -45,9 +47,10 @@ services:
 
   datanode-2:
     image: hadoop-datanode
-#    hostname: datanode-2
-    container_name: datanode2
-#    domainname: hadoop
+    hostname: datanode-2
+    container_name: datanode-2
+    domainname: hadoop
+    network_mode: "hadoop"
 #    extra_hosts:  # 生产环境 云端配置
 #      - namenode:0.0.0.0
     depends_on:
